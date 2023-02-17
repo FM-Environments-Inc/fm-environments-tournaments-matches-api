@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fm-environments-tournaments-matches-api-deployment
+  labels:
+    app: fm-environments-tournaments-matches-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fm-environments-tournaments-matches-api
+  template:
+    metadata:
+      labels:
+        app: fm-environments-tournaments-matches-api
+    spec:
+      containers:
+      - name: fm-environments-tournaments-matches-api
+        image: kuzyacat/fm-environments-tournaments-matches-api
+        ports:
+        - containerPort: 3007
+        env:
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: postgres-user
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postres-secret
+              key: postgres-password 
+        - name: DB_URL
+          valueFrom:
+            configMapKeyRef:
+              name: postgres-config
+              key: postgres-url
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fm-environments-tournaments-matches-service
+spec:
+  type: NodePort
+  selector:
+    app: fm-environments-tournaments-matches
+  ports:
+    - protocol: TCP
+      port: 3007
+      targetPort: 3007
+      nodePort: 30107
