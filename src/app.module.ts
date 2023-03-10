@@ -8,6 +8,7 @@ import {
 } from '@nestjs/apollo';
 
 import { DatabaseModule } from './database/database.module';
+import { SeasonModule } from './season/season.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { DatabaseModule } from './database/database.module';
       debug: true,
     }),
     DatabaseModule,
+    SeasonModule,
   ],
   providers: [],
 })
