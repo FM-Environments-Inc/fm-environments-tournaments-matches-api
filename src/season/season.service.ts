@@ -6,7 +6,7 @@ import { GetCurrentSeasonArgs } from './dto/args/get-season.args';
 import { GetSeasonsArgs } from './dto/args/get-seasons.args';
 import { CreateSeasonInput } from './dto/input/create-season.input';
 import { FinishSeasonInput } from './dto/input/finish-season.input';
-import { SORT_WAY } from '../config/constants/index.d';
+import { SORT_WAY } from '../config/constants';
 
 import { Season } from './season.entity';
 
@@ -20,16 +20,15 @@ export class SeasonService {
   public async create(createSeasonInput: CreateSeasonInput): Promise<Season> {
     const currentSeason = await this.get({
       environment: createSeasonInput.environment,
-      finishedAt: null,
     });
 
-    if (!currentSeason) {
+    if (currentSeason && !currentSeason.finishedAt) {
       throw new Error('Cannot create season having unfinished one');
     }
 
     const newEnvironment = this.seasonRepository.create({
       ...createSeasonInput,
-      sequenceNumber: currentSeason.sequenceNumber + 1,
+      sequenceNumber: currentSeason ? currentSeason.sequenceNumber + 1 : 1,
     });
     return this.seasonRepository.save(newEnvironment);
   }

@@ -7,5 +7,5 @@ export class GetCurrentSeasonArgs {
   @IsNotEmpty()
   environment: string;
 
-  finishedAt: null;
+  finishedAt?: null;
 }
