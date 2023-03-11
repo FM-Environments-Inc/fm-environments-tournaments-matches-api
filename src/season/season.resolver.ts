@@ -18,13 +18,13 @@ export class SeasonResolver {
     return this.seasonService.get(getCurrentSeasonArgs);
   }
 
-  @Query(() => [Season], { name: 'environments' })
-  getEnvironments(@Args() getSeasonsArgs: GetSeasonsArgs): Promise<Season[]> {
+  @Query(() => [Season], { name: 'seasons' })
+  getSeasons(@Args() getSeasonsArgs: GetSeasonsArgs): Promise<Season[]> {
     return this.seasonService.getAll(getSeasonsArgs);
   }
 
   @Mutation(() => Season)
-  createEnvironment(
+  createSeason(
     @Args('createSeasonData')
     createSeasonInput: CreateSeasonInput,
   ): Promise<Season> {

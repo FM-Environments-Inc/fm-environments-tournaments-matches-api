@@ -1,0 +1,29 @@
+query currentSeason($environment: String!) {
+  currentSeason(environment: $environment) {
+    sequenceNumber,
+    createdAt,
+  }
+}
+
+query seasons($environment: String!) {
+  seasons(environment: $environment) {
+    sequenceNumber,
+    createdAt,
+    finishedAt,
+  }
+}
+
+mutation createSeason($environment: String!) {
+  createSeason(createSeasonData: { environment: $environment }) {
+    sequenceNumber,
+    createdAt,
+  }
+}
+
+mutation finishSeason($environment: String!) {
+  finishSeason(finishSeasonData: { environment: $environment }) {
+    sequenceNumber,
+    createdAt,
+    finishedAt,
+  }
+}

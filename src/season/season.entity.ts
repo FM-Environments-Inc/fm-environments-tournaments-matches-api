@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { ObjectType, Field } from '@nestjs/graphql';
 
 import { TABLE_NAMES } from '../config/constants/table-names';
@@ -6,7 +6,7 @@ import { TABLE_NAMES } from '../config/constants/table-names';
 @Entity({ name: TABLE_NAMES.SEASONS })
 @ObjectType()
 export class Season {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn('increment')
   @Field()
   id: number;
 
@@ -22,7 +22,7 @@ export class Season {
   @Field()
   createdAt: Date = new Date();
 
-  @Column()
+  @Column({ nullable: true })
   @Field({ nullable: true })
   finishedAt: Date | null = null;
 }
