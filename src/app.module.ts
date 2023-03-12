@@ -9,6 +9,7 @@ import {
 
 import { DatabaseModule } from './database/database.module';
 import { SeasonModule } from './season/season.module';
+import { MatchModule } from './match/match.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { SeasonModule } from './season/season.module';
     }),
     DatabaseModule,
     SeasonModule,
+    MatchModule,
   ],
   providers: [],
 })

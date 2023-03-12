@@ -15,14 +15,30 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type Match {
+  id: Float!
+  environment: String!
+  team1: String!
+  team2: String!
+  team1Goals: Float!
+  team2Goals: Float!
+  winner: String
+  finishedAt: DateTime
+  createdAt: DateTime!
+}
+
 type Query {
   currentSeason(environment: String!): Season
   seasons(environment: String!): [Season!]!
+  latestTeamMatches(teamId: String!, environment: String!, count: Float): [Match!]!
+  match(id: Float!): Match!
 }
 
 type Mutation {
   createSeason(createSeasonData: CreateSeasonInput!): Season!
   finishSeason(finishSeasonData: FinishSeasonInput!): Season!
+  createMatch(createMatchData: CreateMatchInput!): Match!
+  finishMatch(finishMatchData: FinishMatchInput!): Match!
 }
 
 input CreateSeasonInput {
@@ -31,4 +47,18 @@ input CreateSeasonInput {
 
 input FinishSeasonInput {
   environment: String!
+}
+
+input CreateMatchInput {
+  environment: String!
+  team1: String!
+  team2: String!
+}
+
+input FinishMatchInput {
+  id: Float!
+  environment: String!
+  winner: String
+  team1Goals: Float!
+  team2Goals: Float!
 }
