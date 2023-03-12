@@ -27,3 +27,70 @@ mutation finishSeason($environment: String!) {
     finishedAt,
   }
 }
+
+mutation createMatch(
+  $environment: String!,
+  $team1: String!,
+  $team2: String!,
+) {
+  createMatch(createMatchData: {
+    environment: $environment,
+    team1: $team1,
+    team2: $team2,
+  }) {
+    team1,
+    team2,
+    createdAt,
+  }
+}
+
+mutation finishMatch(
+  $environment: String!,
+  $team1Goals: Float!,
+  $team2Goals: Float!,
+  $id: Float!,
+  $winner: String,
+) {
+  finishMatch(finishMatchData: {
+    environment: $environment,
+    id: $id,
+    team1Goals: $team1Goals,
+    team2Goals: $team2Goals,
+    winner: $winner,
+  }) {
+    team1,
+    team2,
+    team1Goals,
+    team2Goals,
+    winner,
+    finishedAt,
+    id,
+    createdAt,
+  }
+}
+
+query latestTeamMatches($environment: String!, $teamId: String!) {
+  latestTeamMatches(environment: $environment, teamId: $teamId) {
+    id,
+    team1,
+    team2,
+    winner,
+    team1Goals,
+    team2Goals,
+    createdAt,
+    finishedAt,
+  }
+}
+
+query match($id: Float!) {
+  match(id: $id) {
+    id,
+    team1,
+    team2,
+    winner,
+    team1Goals,
+    team2Goals,
+    createdAt,
+    finishedAt,
+  }
+}
