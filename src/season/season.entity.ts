@@ -1,9 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Index } from 'typeorm';
 import { ObjectType, Field } from '@nestjs/graphql';
 
 import { TABLE_NAMES } from '../config/constants/table-names';
 
 @Entity({ name: TABLE_NAMES.SEASONS })
+@Index(['sequenceNumber'])
 @ObjectType()
 export class Season {
   @PrimaryGeneratedColumn('increment')
