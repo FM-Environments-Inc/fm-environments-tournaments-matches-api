@@ -1,9 +1,17 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  Index,
+} from 'typeorm';
 import { ObjectType, Field } from '@nestjs/graphql';
 
 import { TABLE_NAMES } from '../config/constants/table-names';
 
 @Entity({ name: TABLE_NAMES.MATCHES })
+@Index(['team1'])
+@Index(['team2'])
 @ObjectType()
 export class Match {
   @PrimaryGeneratedColumn('increment')
