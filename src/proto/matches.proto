@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package matches;
+
+service MatchesRPCService {
+  rpc getTeamsMatches (GetTeamsMatchesParams) returns (TeamsMatchesResponse);
+}
+
+message GetTeamsMatchesParams {
+  repeated string teamIds = 1;
+  string environment = 2;
+}
+
+message TeamMatch {
+  string teamId = 1;
+  int32 wins = 2;
+  int32 draws = 3;
+  int32 loses = 4;
+  int32 goals = 5;
+  int32 goalsAgainst = 6;
+  int32 goalsDifference = 7;
+}
+
+message TeamsMatchesResponse {
+  repeated TeamMatch data = 1;
+}
+
