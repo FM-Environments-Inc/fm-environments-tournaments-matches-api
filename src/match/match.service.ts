@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Not, IsNull } from 'typeorm';
+import { Repository, Not, IsNull, getConnection, DataSource } from 'typeorm';
 
 import { Match } from './match.entity';
 import { SeasonService } from '../season/season.service';
@@ -16,8 +16,10 @@ import { MatchAction } from './match-action.entity';
 export class MatchService {
   constructor(
     @InjectRepository(Match) private matchRepository: Repository<Match>,
+    @InjectRepository(MatchAction) private matchActionRepository: Repository<MatchAction>,
     private seasonService: SeasonService,
     private matchActionService: MatchActionService,
+    private readonly dataSource: DataSource,
   ) {}
 
   public async getLatestTeamMatches(
@@ -96,15 +98,31 @@ export class MatchService {
 
       matchActions = [...participationActions, ...matchActions];
 
-      await this.matchActionService.create(matchActions);
+      const queryRunner = this.dataSource.createQueryRunner();
+      await queryRunner.startTransaction();
 
-      return this.matchRepository.save({
-        ...match,
-        team1Goals: finishMatchInput.team1Goals,
-        team2Goals: finishMatchInput.team2Goals,
-        winner: finishMatchInput.winner,
-        finishedAt: new Date(),
-      });
+      try {
+        let result = null;
+
+        await queryRunner.manager.getRepository(MatchAction).save(matchActions);
+        result = await queryRunner.manager.getRepository(Match).save({
+          ...match,
+          team1Goals: finishMatchInput.team1Goals,
+          team2Goals: finishMatchInput.team2Goals,
+          winner: finishMatchInput.winner,
+          finishedAt: new Date(),
+        });
+
+        await queryRunner.commitTransaction();
+
+        return result;
+      } catch (error) {
+        console.log(error);
+        await queryRunner.rollbackTransaction();
+        throw new Error(error.message);
+      } finally {
+        await queryRunner.release();
+      }
     }
 
     throw new Error('Match not found');
