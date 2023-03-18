@@ -4,17 +4,20 @@ import { Repository, Not, IsNull } from 'typeorm';
 
 import { Match } from './match.entity';
 import { SeasonService } from '../season/season.service';
+import { MatchActionService } from './match-action.service';
 
 import { GetLatestTeamMatchesArgs } from './dto/args/get-latest-team-matches.args';
 import { GetMatchArgs } from './dto/args/get-match.args';
 import { CreateMatchInput } from './dto/input/create-match.input';
 import { FinishMatchInput } from './dto/input/finish-match.input';
+import { MatchAction } from './match-action.entity';
 
 @Injectable()
 export class MatchService {
   constructor(
     @InjectRepository(Match) private matchRepository: Repository<Match>,
     private seasonService: SeasonService,
+    private matchActionService: MatchActionService,
   ) {}
 
   public async getLatestTeamMatches(
@@ -59,6 +62,8 @@ export class MatchService {
   }
 
   public async finish(finishMatchInput: FinishMatchInput): Promise<Match> {
+    const { actions, environment, participants = [] } = finishMatchInput;
+
     const match = await this.matchRepository.findOne({
       where: {
         id: finishMatchInput.id,
@@ -69,6 +74,29 @@ export class MatchService {
       if (match.finishedAt) {
         throw new Error('Match is already finished');
       }
+
+      let matchActions: MatchAction[] = actions.map((action) => ({
+        ...action,
+        environment,
+        match,
+        matchId: match.id,
+      }));
+
+      const initialParticipationActions = participants.map((participant) => ({
+        ...participant,
+        environment,
+        match,
+        matchId: match.id,
+      }));
+
+      const participationActions =
+        this.matchActionService.getParticipationActions(
+          initialParticipationActions,
+        );
+
+      matchActions = [...participationActions, ...matchActions];
+
+      await this.matchActionService.create(matchActions);
 
       return this.matchRepository.save({
         ...match,
@@ -87,12 +115,17 @@ export class MatchService {
 
     // TODO: get teams details
 
-    return this.matchRepository.findOne({
+    const match = await this.matchRepository.findOne({
       where: [
         {
           id,
         },
       ],
     });
+    const actions = await this.matchActionService.get({ match });
+    return {
+      ...match,
+      actions,
+    };
   }
 }

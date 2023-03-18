@@ -15,6 +15,17 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type MatchAction {
+  id: Float!
+  environment: String!
+  team: String!
+  player: String!
+  type: String!
+  minute: Float!
+  match: Match!
+  createdAt: DateTime!
+}
+
 type Match {
   id: Float!
   environment: String!
@@ -25,6 +36,7 @@ type Match {
   winner: String
   finishedAt: DateTime
   createdAt: DateTime!
+  actions: [MatchAction!]
 }
 
 type Query {
@@ -61,4 +73,18 @@ input FinishMatchInput {
   winner: String
   team1Goals: Float!
   team2Goals: Float!
+  actions: [Action!] = []
+  participants: [Participant!] = []
+}
+
+input Action {
+  player: String!
+  team: String
+  type: String!
+  minute: Float!
+}
+
+input Participant {
+  player: String!
+  team: String!
 }
