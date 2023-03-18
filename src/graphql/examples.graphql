@@ -81,6 +81,26 @@ query latestTeamMatches($environment: String!, $teamId: String!) {
     team2Goals,
     createdAt,
     finishedAt,
+    teams {
+      _id,
+      logo,
+      name,
+      players {
+        position,
+        isPenaltyShooter,
+        isFreeKicker,
+        isCornerKicker,
+        reference {
+          _id,
+          firstName,
+          lastName,
+          evaluation,
+          features,
+          role,
+          position
+        }
+      }
+    },
   }
 }
 

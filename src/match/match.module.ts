@@ -1,5 +1,7 @@
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Module } from '@nestjs/common';
+import { ClientProxyFactory, Transport } from '@nestjs/microservices';
+import { join } from 'path';
 
 import { MatchResolver } from './match.resolver';
 import { MatchService } from './match.service';
@@ -19,6 +21,19 @@ require('dotenv').config();
     MatchResolver,
     MatchesRPCService,
     MatchActionService,
+    {
+      provide: 'TEAMS_PACKAGE',
+      useFactory: () => {
+        return ClientProxyFactory.create({
+          transport: Transport.GRPC,
+          options: {
+            package: 'teams',
+            protoPath: join(process.cwd(), 'src/proto/teams.proto'),
+            url: `${process.env.TEAMS_RPC_URL}`,
+          },
+        });
+      },
+    },
   ],
   controllers: [MatchesRPCService],
   exports: [MatchService, MatchesRPCService, MatchActionService],

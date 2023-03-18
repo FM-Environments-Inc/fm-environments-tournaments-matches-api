@@ -9,6 +9,7 @@ import { ObjectType, Field } from '@nestjs/graphql';
 
 import { TABLE_NAMES } from '../config/constants/table-names';
 import { MatchAction } from './match-action.entity';
+import { MatchTeam } from './match.interface';
 
 @Entity({ name: TABLE_NAMES.MATCHES })
 @Index(['team1'])
@@ -53,4 +54,7 @@ export class Match {
 
   @Field(() => [MatchAction], { nullable: true })
   actions?: MatchAction[] = [];
+
+  @Field(() => [MatchTeam], { nullable: true })
+  teams?: MatchTeam[] = [];
 }
