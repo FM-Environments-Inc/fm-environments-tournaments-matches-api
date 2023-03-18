@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package teams;
+
+service TeamRPCService {
+  rpc getMatchTeams (GetMatchTeamsParams) returns (MatchTeamsResponse);
+}
+
+message GetMatchTeamsParams {
+  repeated string teamIds = 1;
+  string environment = 2;
+  bool toGetPlayers = 3;
+}
+
+message Player {
+  string _id = 1;
+  string firstName = 2;
+  string lastName = 3;
+  int32 evaluation = 4;
+  string features = 5;
+  string role = 6;
+  string position = 7;
+}
+
+message TeamPlayer {
+  string position = 1;
+  bool isPenaltyShooter = 2;
+  bool isFreeKicker = 3;
+  bool isCornerKicker = 4;
+  Player reference = 5;
+}
+
+message TeamMatch {
+  string _id = 1;
+  string logo = 2;
+  string name = 3;
+  repeated TeamPlayer players = 4;
+}
+
+message MatchTeamsResponse {
+  repeated TeamMatch data = 1;
+}
+

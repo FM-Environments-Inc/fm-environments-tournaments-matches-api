@@ -26,6 +26,31 @@ type MatchAction {
   createdAt: DateTime!
 }
 
+type Player {
+  _id: String!
+  firstName: String
+  lastName: String
+  evaluation: Float
+  features: String
+  role: String
+  position: String
+}
+
+type MatchTeamPlayer {
+  position: String!
+  isPenaltyShooter: Boolean
+  isFreeKicker: Boolean
+  isCornerKicker: Boolean
+  reference: Player
+}
+
+type MatchTeam {
+  _id: String!
+  logo: String
+  name: String!
+  players: [MatchTeamPlayer!]!
+}
+
 type Match {
   id: Float!
   environment: String!
@@ -37,6 +62,7 @@ type Match {
   finishedAt: DateTime
   createdAt: DateTime!
   actions: [MatchAction!]
+  teams: [MatchTeam!]
 }
 
 type Query {

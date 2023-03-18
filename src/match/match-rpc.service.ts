@@ -67,6 +67,7 @@ export class MatchesRPCService {
   @GrpcMethod('MatchesRPCService', 'getPlayersMatches')
   async getPlayersMatches(getPlayersMatches: GetPlayersMatchesArgs) {
     const { playerIds, environment } = getPlayersMatches;
+    // TODO: count, not retrieve
     const actions = await this.matchActionRepository.find({
       where: [
         {

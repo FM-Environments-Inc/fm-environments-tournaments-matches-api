@@ -29,8 +29,6 @@ export class MatchService {
 
     const DEFAULT_TAKE = 5;
 
-    // TODO: get teams details
-
     return this.matchRepository.find({
       where: [
         {
@@ -130,8 +128,6 @@ export class MatchService {
 
   public async get(getMatchArgs: GetMatchArgs): Promise<Match> {
     const { id } = getMatchArgs;
-
-    // TODO: get teams details
 
     const match = await this.matchRepository.findOne({
       where: [

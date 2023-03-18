@@ -1,4 +1,6 @@
 import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
+import { Inject, OnModuleInit } from '@nestjs/common';
+import { ClientGrpc } from '@nestjs/microservices';
 
 import { Match } from './match.entity';
 import { MatchService } from './match.service';
@@ -7,19 +9,54 @@ import { GetLatestTeamMatchesArgs } from './dto/args/get-latest-team-matches.arg
 import { GetMatchArgs } from './dto/args/get-match.args';
 import { CreateMatchInput } from './dto/input/create-match.input';
 import { FinishMatchInput } from './dto/input/finish-match.input';
+import { ITeamRPCService } from './match.interface';
 
 import { NotFoundException } from '../exceptions/not-found.exception';
 import { BadRequestException } from '../exceptions/bad-request.exception';
 
 @Resolver(() => Match)
 export class MatchResolver {
-  constructor(private readonly matchService: MatchService) {}
+  private teamRPCService: ITeamRPCService;
+
+  constructor(
+    private readonly matchService: MatchService,
+    @Inject('TEAMS_PACKAGE') private client: ClientGrpc,
+  ) {}
+
+  onModuleInit() {
+    this.teamRPCService =
+      this.client.getService<ITeamRPCService>('TeamRPCService');
+  }
 
   @Query(() => [Match], { name: 'latestTeamMatches' })
   async getLatestTeamMatches(
     @Args() getLatestTeamMatchesArgs: GetLatestTeamMatchesArgs,
   ): Promise<Match[]> {
-    return this.matchService.getLatestTeamMatches(getLatestTeamMatchesArgs);
+    const matches = await this.matchService.getLatestTeamMatches(
+      getLatestTeamMatchesArgs,
+    );
+
+    return Promise.all(
+      matches.map(async (match) => {
+        const teamsResponse = await this.teamRPCService
+          .getMatchTeams({
+            environment: getLatestTeamMatchesArgs.environment,
+            teamIds: matches.reduce(
+              (acc, match) => [...acc, match.team1, match.team2],
+              [],
+            ),
+            toGetPlayers: false,
+          })
+          .toPromise();
+
+        const { data: teams } = teamsResponse;
+
+        return {
+          ...match,
+          teams,
+        };
+      }),
+    );
   }
 
   @Query(() => Match, { name: 'match' })
