@@ -108,3 +108,18 @@ export class MatchTeam {
   @Field(() => [MatchTeamPlayer])
   players: MatchTeamPlayer[];
 }
+
+@ObjectType()
+export class GetAllMatchesResponse {
+  @Field(() => [Match])
+  matches: Match[];
+
+  @Field()
+  total: number;
+
+  @Field()
+  page: number = 1;
+
+  @Field()
+  limit: number = 20;
+}

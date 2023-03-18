@@ -5,12 +5,16 @@ import { Repository, Not, IsNull, DataSource } from 'typeorm';
 import { Match } from './match.entity';
 import { SeasonService } from '../season/season.service';
 import { MatchActionService } from './match-action.service';
+import { MatchAction } from './match-action.entity';
 
 import { GetLatestTeamMatchesArgs } from './dto/args/get-latest-team-matches.args';
 import { GetMatchArgs } from './dto/args/get-match.args';
+import { GetAllMatchesArgs } from './dto/args/get-all-matches.args';
 import { CreateMatchInput } from './dto/input/create-match.input';
 import { FinishMatchInput } from './dto/input/finish-match.input';
-import { MatchAction } from './match-action.entity';
+import { SORT_WAY } from '../config/constants';
+import { IPagination } from '../common/types.d';
+import { GetAllMatchesResponse } from './match.interface';
 
 @Injectable()
 export class MatchService {
@@ -124,6 +128,42 @@ export class MatchService {
     }
 
     throw new Error('Match not found');
+  }
+
+  public async getAll(
+    getAllMatchesArgs: GetAllMatchesArgs,
+    paginationOptions: IPagination,
+  ): Promise<GetAllMatchesResponse> {
+    const { environment } = getAllMatchesArgs;
+    const { page, limit } = paginationOptions;
+
+    const skip: number = (page - 1) * limit;
+
+    const matches = await this.matchRepository.find({
+      where: [
+        {
+          environment,
+        },
+      ],
+      order: {
+        createdAt: SORT_WAY.DESC,
+      },
+      skip,
+      take: limit,
+    });
+
+    const total = await this.matchRepository.count({
+      where: {
+        environment,
+      },
+    });
+
+    return {
+      matches,
+      limit,
+      page,
+      total,
+    };
   }
 
   public async get(getMatchArgs: GetMatchArgs): Promise<Match> {
