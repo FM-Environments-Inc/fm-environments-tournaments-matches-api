@@ -14,6 +14,7 @@ const options: TypeOrmModuleOptions = {
   migrations: [path.resolve(__dirname, '..', 'migrations', '*')],
   entities: [path.resolve(__dirname, '..', '**', '*.entity.*')],
   synchronize: true,
+  // logging: true,
 };
 
 module.exports = options;
