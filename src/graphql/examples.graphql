@@ -43,13 +43,14 @@ mutation createMatch(
     createdAt,
   }
 }
-
 mutation finishMatch(
   $environment: String!,
   $team1Goals: Float!,
   $team2Goals: Float!,
   $id: Float!,
   $winner: String,
+  $participants: [Participant!],
+  $actions: [Action!],
 ) {
   finishMatch(finishMatchData: {
     environment: $environment,
@@ -57,6 +58,8 @@ mutation finishMatch(
     team1Goals: $team1Goals,
     team2Goals: $team2Goals,
     winner: $winner,
+    participants: $participants,
+    actions: $actions,
   }) {
     team1,
     team2,
@@ -68,7 +71,6 @@ mutation finishMatch(
     createdAt,
   }
 }
-
 query latestTeamMatches($environment: String!, $teamId: String!) {
   latestTeamMatches(environment: $environment, teamId: $teamId) {
     id,
