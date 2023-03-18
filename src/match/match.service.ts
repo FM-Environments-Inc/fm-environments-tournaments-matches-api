@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Not, IsNull, getConnection, DataSource } from 'typeorm';
+import { Repository, Not, IsNull, DataSource } from 'typeorm';
 
 import { Match } from './match.entity';
 import { SeasonService } from '../season/season.service';
