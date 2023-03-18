@@ -9,7 +9,8 @@ import { GetLatestTeamMatchesArgs } from './dto/args/get-latest-team-matches.arg
 import { GetMatchArgs } from './dto/args/get-match.args';
 import { CreateMatchInput } from './dto/input/create-match.input';
 import { FinishMatchInput } from './dto/input/finish-match.input';
-import { ITeamRPCService } from './match.interface';
+import { ITeamRPCService, GetAllMatchesResponse } from './match.interface';
+import { GetAllMatchesArgs } from './dto/args/get-all-matches.args';
 
 import { NotFoundException } from '../exceptions/not-found.exception';
 import { BadRequestException } from '../exceptions/bad-request.exception';
@@ -41,10 +42,7 @@ export class MatchResolver {
         const teamsResponse = await this.teamRPCService
           .getMatchTeams({
             environment: getLatestTeamMatchesArgs.environment,
-            teamIds: matches.reduce(
-              (acc, match) => [...acc, match.team1, match.team2],
-              [],
-            ),
+            teamIds: [match.team1, match.team2],
             toGetPlayers: false,
           })
           .toPromise();
@@ -62,6 +60,44 @@ export class MatchResolver {
   @Query(() => Match, { name: 'match' })
   async getMatch(@Args() getMatchArgs: GetMatchArgs): Promise<Match> {
     return this.matchService.get(getMatchArgs);
+  }
+
+  @Query(() => GetAllMatchesResponse, { name: 'matches' })
+  async getMatches(
+    @Args() getAllMatchesArgs: GetAllMatchesArgs,
+  ): Promise<GetAllMatchesResponse> {
+    const paginationOptions = {
+      limit: getAllMatchesArgs.limit,
+      page: getAllMatchesArgs.page,
+    };
+    const matchesData = await this.matchService.getAll(
+      getAllMatchesArgs,
+      paginationOptions,
+    );
+
+    const matches = await Promise.all(
+      matchesData.matches.map(async (match) => {
+        const teamsResponse = await this.teamRPCService
+          .getMatchTeams({
+            environment: getAllMatchesArgs.environment,
+            teamIds: [match.team1, match.team2],
+            toGetPlayers: false,
+          })
+          .toPromise();
+
+        const { data: teams } = teamsResponse;
+
+        return {
+          ...match,
+          teams,
+        };
+      }),
+    );
+
+    return {
+      ...matchesData,
+      matches,
+    };
   }
 
   @Mutation(() => Match)

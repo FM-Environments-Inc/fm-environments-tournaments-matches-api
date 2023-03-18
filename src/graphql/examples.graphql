@@ -116,3 +116,34 @@ query match($id: Float!) {
     finishedAt,
   }
 }
+
+query matches(
+  $environment: String!,
+  $limit: Float,
+  $page: Float,
+) {
+  matches(
+    environment: $environment,
+    limit: $limit,
+    page: $page,
+  ) {
+    total,
+    page,
+    limit,
+    matches {
+      id,
+      team1,
+      team2,
+      winner,
+      team1Goals,
+      team2Goals,
+      createdAt,
+      finishedAt,
+      teams {
+        _id,
+        logo,
+        name,
+      }
+  	}
+  }
+}
