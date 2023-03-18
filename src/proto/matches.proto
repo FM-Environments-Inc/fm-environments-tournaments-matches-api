@@ -4,10 +4,16 @@ package matches;
 
 service MatchesRPCService {
   rpc getTeamsMatches (GetTeamsMatchesParams) returns (TeamsMatchesResponse);
+  rpc getPlayersMatches (GetPlayersMatchesParams) returns (PlayersMatchesResponse);
 }
 
 message GetTeamsMatchesParams {
   repeated string teamIds = 1;
+  string environment = 2;
+}
+
+message GetPlayersMatchesParams {
+  repeated string playerIds = 1;
   string environment = 2;
 }
 
@@ -21,7 +27,18 @@ message TeamMatch {
   int32 goalsDifference = 7;
 }
 
+message PlayerMatch {
+  string playerId = 1;
+  int32 matches = 2;
+  int32 goals = 3;
+  int32 assists = 4;
+}
+
 message TeamsMatchesResponse {
   repeated TeamMatch data = 1;
+}
+
+message PlayersMatchesResponse {
+  repeated PlayerMatch data = 1;
 }
 
