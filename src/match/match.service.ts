@@ -159,7 +159,7 @@ export class MatchService {
     });
 
     return {
-      matches,
+      data: matches,
       limit,
       page,
       total,

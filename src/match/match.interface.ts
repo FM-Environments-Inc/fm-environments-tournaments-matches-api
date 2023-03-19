@@ -53,7 +53,7 @@ export interface ITeamRPCService {
 }
 
 @ObjectType()
-export class Player {
+export class MatchTeamPlayerReference {
   @Field()
   _id: string;
 
@@ -90,8 +90,8 @@ export class MatchTeamPlayer {
   @Field({ nullable: true })
   isCornerKicker?: boolean = false;
 
-  @Field(() => Player, { nullable: true })
-  reference: Player;
+  @Field(() => MatchTeamPlayerReference, { nullable: true })
+  reference: MatchTeamPlayerReference;
 }
 
 @ObjectType()
@@ -112,7 +112,7 @@ export class MatchTeam {
 @ObjectType()
 export class GetAllMatchesResponse {
   @Field(() => [Match])
-  matches: Match[];
+  data: Match[];
 
   @Field()
   total: number;

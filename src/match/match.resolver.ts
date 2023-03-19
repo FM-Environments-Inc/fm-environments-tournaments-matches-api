@@ -76,7 +76,7 @@ export class MatchResolver {
     );
 
     const matches = await Promise.all(
-      matchesData.matches.map(async (match) => {
+      matchesData.data.map(async (match) => {
         const teamsResponse = await this.teamRPCService
           .getMatchTeams({
             environment: getAllMatchesArgs.environment,
@@ -96,7 +96,7 @@ export class MatchResolver {
 
     return {
       ...matchesData,
-      matches,
+      data: matches,
     };
   }
 

@@ -26,7 +26,7 @@ type MatchAction {
   createdAt: DateTime!
 }
 
-type Player {
+type MatchTeamPlayerReference {
   _id: String!
   firstName: String
   lastName: String
@@ -41,7 +41,7 @@ type MatchTeamPlayer {
   isPenaltyShooter: Boolean
   isFreeKicker: Boolean
   isCornerKicker: Boolean
-  reference: Player
+  reference: MatchTeamPlayerReference
 }
 
 type MatchTeam {
@@ -52,7 +52,7 @@ type MatchTeam {
 }
 
 type GetAllMatchesResponse {
-  matches: [Match!]!
+  data: [Match!]!
   total: Float!
   page: Float!
   limit: Float!

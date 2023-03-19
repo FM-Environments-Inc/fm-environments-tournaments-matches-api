@@ -130,7 +130,7 @@ query matches(
     total,
     page,
     limit,
-    matches {
+    data {
       id,
       team1,
       team2,
